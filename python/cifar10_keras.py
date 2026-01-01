@@ -2,14 +2,13 @@
 """
   cifar10_keras.py
 
-  Train a simple deep CNN on the CIFAR10 small images dataset.
+  Convolutional Neural Network (CNN)
+
+  This tutorial demonstrates training a simple CNN to classify CIFAR images.
 
   References
     https://www.tensorflow.org/tutorials/images/cnn
     https://www.tensorflow.org/tutorials/quickstart/advanced
-    https://machinelearningmastery.com/how-to-develop-a-cnn-from-scratch-for-cifar-10-photo-classification/
-    https://towardsdatascience.com/implementing-a-deep-neural-network-for-the-cifar-10-dataset-c6eb493008a5
-    https://towardsdatascience.com/deep-learning-with-cifar-10-image-classification-64ab92110d79
 """
 import numpy as np
 import pandas as pd
