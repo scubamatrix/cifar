@@ -35,6 +35,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow import keras
 from tensorflow.keras import backend as K
 from tensorflow.keras.datasets import cifar10
+
 from tensorflow.keras.layers import (
     Conv2D,
     Dense,
@@ -640,13 +641,13 @@ def create_model(params: Params, name):
     x = Dense(64, activation="relu")(x)
 
     # Add a dense classifier on top
-    if params.loss != "categorical_crossentropy":
-        outputs = Dense(10)(x)                        # SparseCategoricalCrossentropy
-    else:
+    if params.loss == "categorical_crossentropy":
         # The activation is softmax which makes the output sum up to 1
         # so the output can be interpreted as probabilities.
         # The model will then make predictions based on which option has a higher probability.
         outputs = Dense(10, activation="softmax")(x)  # categorical_crossentropy
+    else:
+        outputs = Dense(10)(x)                        # SparseCategoricalCrossentropy
 
     model = keras.Model(inputs=inputs, outputs=outputs, name=name)
 
@@ -779,6 +780,20 @@ def evaluate_model(params: Params, X_train, X_val, X_test, y_train, y_val, y_tes
 
 
 def main(params: Params):
+    """
+    The main program.
+    """
+    model = 2
+
+    if model == 1:
+        params.loss = "categorical_crossentropy"
+        params.optimizer = SGD(learning_rate=0.01, momentum=0.9)
+    else:
+        params.loss = SparseCategoricalCrossentropy(from_logits=True)
+        # params.optimizer = "adamax"
+        # params.optimizer = "rmsprop"
+        params.optimizer = "adam"   # adam does not converge on macos with GPU
+
     X_train, y_train, X_val, y_val, X_test, y_test = load_data(params)
 
     # Get script filename instead of path
@@ -839,17 +854,6 @@ if __name__ == "__main__":
     params.debug = True
     params.use_logger = True
     params.num_epochs = 15
-
-    model = 2
-    if model == 1:
-        params.loss = "categorical_crossentropy"
-        params.optimizer = SGD(learning_rate=0.01, momentum=0.9)
-        # params.optimizer = "sgd"
-    else:
-        params.loss = SparseCategoricalCrossentropy(from_logits=True)
-        # params.optimizer = "adamax"
-        # params.optimizer = "rmsprop"
-        params.optimizer = "adam"   # adam does not converge on macos with GPU
 
     # Create directory if not exist
     if not os.path.exists(params.output_dir):
